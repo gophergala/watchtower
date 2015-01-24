@@ -3,6 +3,8 @@ package channels
 import (
 	"errors"
 	"sync"
+
+	"github.com/gophergala/watchtower/messages"
 )
 
 const (
@@ -40,7 +42,7 @@ func Join(userID, channelID uint32) {
 	c := Channel{
 		id:           channelID,
 		subscribers:  map[uint32]struct{}{userID: struct{}{}},
-		messageQueue: make(chan Message, channelMessageBufferSize),
+		messageQueue: make(chan messages.Message, channelMessageBufferSize),
 	}
 	channels[channelID] = &c
 
@@ -72,6 +74,6 @@ func Broadcast(sender, channelID uint32, content string) error {
 	}
 
 	// Queue the message
-	channel.messageQueue <- &BroadcastMessage{content: content}
+	channel.messageQueue <- messages.NewBroadcastMessage(sender, content)
 	return nil
 }

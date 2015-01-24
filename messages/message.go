@@ -15,6 +15,13 @@ type BroadcastMessage struct {
 	content string
 }
 
+func NewBroadcastMessage(sender uint32, content string) *BroadcastMessage {
+	return &BroadcastMessage{
+		sender:  sender,
+		content: content,
+	}
+}
+
 // Sender returns the message's sender ID
 func (b *BroadcastMessage) Sender() uint32 {
 	return b.sender

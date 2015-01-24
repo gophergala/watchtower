@@ -37,6 +37,12 @@ func TestBroadcastMessage(t *testing.T) {
 		content: "hello",
 	}
 
+	b2 := NewBroadcastMessage(0, "hello")
+
+	if b != *b2 {
+		t.Error("NewBroadcastMessage created wrong type of struct")
+	}
+
 	if b.sender != 0 || b.Sender() != 0 {
 		t.Error("sender or Sender() did not match")
 	}
