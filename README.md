@@ -69,7 +69,8 @@ HTTP 200
 
 Or any of the following
 
-	* HTTP 401 - invalid or missing sender
+	* HTTP 401 - missing sender
+	* HTTP 403 - invalid sender
 	* HTTP 204 - no channels created yet
 
 

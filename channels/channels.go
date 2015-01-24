@@ -1,6 +1,7 @@
 package channels
 
 import (
+	"errors"
 	"sync"
 )
 
@@ -9,8 +10,12 @@ const (
 )
 
 var (
-	channels         = make(map[uint32]Channel)
+	channels         = make(map[uint32]*Channel)
 	channelEditMutex = &sync.RWMutex{}
+
+	// ErrChannelDoesNotExist is thrown if a user tries to
+	// send a message to a channel that does not exist
+	ErrChannelDoesNotExist = errors.New("the specified channel does not exist")
 )
 
 func init() {
@@ -37,7 +42,7 @@ func Join(userID, channelID uint32) {
 		subscribers:  map[uint32]struct{}{userID: struct{}{}},
 		messageQueue: make(chan Message, channelMessageBufferSize),
 	}
-	channels[channelID] = c
+	channels[channelID] = &c
 
 	channelEditMutex.Unlock()
 }
@@ -53,5 +58,20 @@ func List() []uint32 {
 	channelEditMutex.RUnlock()
 
 	return list
+}
 
+// Broadcast broadcasts a message on a channel
+func Broadcast(sender, channelID uint32, content string) error {
+	channelEditMutex.RLock()
+	defer channelEditMutex.RUnlock()
+
+	// Check that the channel exists
+	channel, exists := channels[channelID]
+	if !exists {
+		return ErrChannelDoesNotExist
+	}
+
+	// Queue the message
+	channel.messageQueue <- &BroadcastMessage{content: content}
+	return nil
 }
