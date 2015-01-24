@@ -53,6 +53,7 @@ HTTP 200
 Or any of the following
 
 	* HTTP 401 - invalid or missing secret key
+	* HTTP 500 - error registering new user
 
 ##### List channels
 
@@ -99,7 +100,7 @@ Or any of the following:
 	* HTTP 400 - "invalid callback URL"
 
 
-##### Broadcast a message on a channel (HTTP)
+##### Broadcast a message on one or more channels (HTTP)
 
 POST to http://your-watchtower-url/broadcast
 
