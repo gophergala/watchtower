@@ -1,4 +1,4 @@
-// package users manage the registered users
+// Package users manages the registered users
 // TODO: Back this with a Bolt DB
 package users
 

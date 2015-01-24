@@ -10,6 +10,7 @@ import (
 )
 
 var (
+	// ErrInvalidSecretKey is thrown if a user tries to register without or with a bad secret key
 	ErrInvalidSecretKey = errors.New("invalid secret key")
 )
 

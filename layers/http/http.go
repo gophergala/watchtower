@@ -1,4 +1,4 @@
-// package http contains all the
+// Package http contains all the
 // HTTP handlers for Watchtower
 package http
 
@@ -33,7 +33,7 @@ func ListChannelsHandler(w http.ResponseWriter, r *http.Request, params httprout
 	fmt.Fprintln(w, response)
 }
 
-// JoinChannelsHandler joins a channel (opening a HTTP stream)
+// JoinChannelsStreamHandler joins a channel (opening a HTTP stream)
 func JoinChannelsStreamHandler(w http.ResponseWriter, r *http.Request, params httprouter.Params) {
 	response, statusCode, err := listChannelsHandler(r, params)
 	if err != nil {

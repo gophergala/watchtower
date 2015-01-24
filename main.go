@@ -50,8 +50,10 @@ func main() {
 		router.Handle("POST", "/broadcast", nil)
 		router.Handle("POST", "/send", nil)
 
+		// Add Watchtower's default headers
+		wrappedRouter := NewDefaultHeadersHandler(router)
 		// Wrap the router with some logging middleware
-		wrappedRouter := handlers.CombinedLoggingHandler(os.Stderr, router)
+		wrappedRouter = handlers.CombinedLoggingHandler(os.Stderr, wrappedRouter)
 
 		// TODO: clean shutdown of HTTP server
 		go func() {
@@ -66,7 +68,7 @@ func main() {
 		}
 
 		go func() {
-			// TODO: Clean server shutdown
+			// TODO: Clean TCP server shutdown
 			for {
 				conn, err := ln.Accept()
 				if err != nil {
@@ -81,6 +83,7 @@ func main() {
 		addr, _ := net.ResolveUDPAddr("udp", fmt.Sprintf(":%d", udpPort))
 		sock, _ := net.ListenUDP("udp", addr)
 
+		// TODO: Clean UDP server shutdown
 		go func() {
 			for {
 				buffer := make([]byte, 1024)
