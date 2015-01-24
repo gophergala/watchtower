@@ -1,9 +1,15 @@
+// package users manage the registered users
+// TODO: Back this with a Bolt DB
 package users
 
 import (
 	"errors"
 	"math/rand"
 	"sync"
+)
+
+const (
+	retryTimes = 1000
 )
 
 var (
@@ -19,14 +25,14 @@ func Register() (uint32, error) {
 	var userID uint32
 
 	usersMutex.Lock()
-	for i := 0; i < 1000; i++ {
-		// Try 1000 times to find a random user id, not already in users
+	for i := 0; i < retryTimes; i++ {
+		// Try retryTimes times to find a random user id, not already in users
 		userID = rand.Uint32()
-		_, alreadyExists := users[r]
+		_, alreadyExists := users[userID]
 		if userID == 0 || !alreadyExists { // 0 is not a valid user ID
 			users[userID] = struct{}{}
+			break
 		}
-		break
 	}
 
 	if userID != 0 {
