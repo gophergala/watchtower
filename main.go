@@ -8,6 +8,9 @@ import (
 	"net/http"
 	"os"
 
+	"github.com/gophergala/watchtower/config"
+	whttp "github.com/gophergala/watchtower/layers/http"
+
 	"github.com/gorilla/handlers"
 	"github.com/julienschmidt/httprouter"
 )
@@ -36,19 +39,21 @@ func main() {
 	flag.IntVar(&udpPort, "udp", -1, "Port to host the UDP server on (defaults to OFF)")
 	flag.Parse()
 
+	config.SetSecret(secretKey)
+
 	if httpPort != -1 {
 		router := httprouter.New()
 		// Register as a new user
-		router.Handle("POST", "/register", nil)
+		router.Handle("POST", "/register", whttp.RegisterHandler)
 
 		// List or join Channels
-		router.Handle("GET", "/channels", nil)
-		router.Handle("GET", "/channels/join", nil)
-		router.Handle("POST", "/channels/join/async", nil)
+		router.Handle("GET", "/channels", whttp.ListChannelsHandler)
+		router.Handle("GET", "/channels/join", whttp.JoinChannelsStreamHandler)
+		router.Handle("POST", "/channels/join/async", whttp.JoinChannelsAsyncHandler)
 
 		// Send messages
-		router.Handle("POST", "/broadcast", nil)
-		router.Handle("POST", "/send", nil)
+		router.Handle("POST", "/broadcast", whttp.BroadcastHandler)
+		router.Handle("POST", "/send", whttp.SendMessageHandler)
 
 		// Add Watchtower's default headers
 		wrappedRouter := NewDefaultHeadersHandler(router)
