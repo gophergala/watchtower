@@ -1,4 +1,4 @@
-package channels
+package messages
 
 // A Message is sent on a channel, either as
 // a broadcast or directly to one or more users
