@@ -103,11 +103,11 @@ Or any of the following:
 
 POST to http://your-watchtower-url/broadcast
 
-{
-    "channels": [5],
-    "sender": 72,
-    "message": "all your base are belong to us"
-}
+	{
+      "channels": [5],
+      "sender": 72,
+      "message": "all your base are belong to us"
+	}
 
 
 Watchtower might reply HTTP 200 (message broadcasted)
@@ -124,12 +124,12 @@ Assuming success, that same message will now be received by all subscribers on c
 
 POST to http://your-watchtower-url/send
 
-{
-    "channels": [5],
-    "sender": 72,
-    "receivers": [52, 34],
-    "message": "your specifical bases are belong to us"
-}
+	{
+      "channels": [5],
+      "sender": 72,
+      "receivers": [52, 34],
+      "message": "your specifical bases are belong to us"
+	}
 
 Watchtower might reply HTTP 200 (message sent to all parties)
 
