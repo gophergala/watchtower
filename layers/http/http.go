@@ -35,7 +35,7 @@ func ListChannelsHandler(w http.ResponseWriter, r *http.Request, params httprout
 
 // JoinChannelsStreamHandler joins a channel (opening a HTTP stream)
 func JoinChannelsStreamHandler(w http.ResponseWriter, r *http.Request, params httprouter.Params) {
-	_, statusCode, err := listChannelsHandler(r, params)
+	_, statusCode, err := joinChannelStreamHandler(w, r, params)
 	if err != nil {
 		http.Error(w, err.Error(), statusCode)
 		return

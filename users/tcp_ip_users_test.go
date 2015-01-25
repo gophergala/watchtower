@@ -12,7 +12,7 @@ func TestTcpIPUser(t *testing.T) {
 	// TODO: Test Send() by opening an actual TCP/IP
 	// connection, passing it in and reading what
 	// Watchtower sends
-	u := NewTCPIPUser(nil)
+	u := NewTCPIPUser()
 
 	if u.ID() != 0 {
 		t.Error("invalid id")

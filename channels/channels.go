@@ -5,6 +5,7 @@ import (
 	"sync"
 
 	"github.com/gophergala/watchtower/messages"
+	"github.com/gophergala/watchtower/users"
 )
 
 const (
@@ -23,7 +24,7 @@ var (
 // Join a channel. Creates the channel if it doesn't exist
 func Join(userID, channelID uint32) {
 	channelEditMutex.Lock()
-
+	defer channelEditMutex.Unlock()
 	// Add the new subscriber to an existing channel
 	channel, exists := channels[channelID]
 	if exists {
@@ -41,7 +42,6 @@ func Join(userID, channelID uint32) {
 	}
 
 	channels[channelID] = &c
-	channelEditMutex.Unlock()
 }
 
 // List returns a thread-safe list of active channels
@@ -69,6 +69,11 @@ func Send(m messages.Message, channelID uint32) error {
 	channel, exists := channels[channelID]
 	if !exists {
 		return ErrChannelDoesNotExist
+	}
+
+	subscribers := channel.subscribers
+	for subscriberID := range subscribers {
+		users.Send(subscriberID, channelID, m)
 	}
 
 	// Queue the message for sending

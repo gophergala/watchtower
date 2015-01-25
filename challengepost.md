@@ -13,7 +13,7 @@ Go felt like a natural choice for this project for several reasons. A server app
 
 Go has all of this, with loads of sugar on top.
 
-### Key features
+### Key features (project goals)
 
 Hoping to get the app finished enough today that all of these will be true, but below are at least my goals for the project.
 
@@ -22,14 +22,13 @@ Hoping to get the app finished enough today that all of these will be true, but 
   * Listening in on a channel and storing data on your server to graph later? Use the HTTP async callback endpoints
   * Sending out data from your Arduinos? Use the TCP/IP or UDP endpoints
 * High performance
-	* The server can handle thousands of subscribers on thousands of channels without problems
+	* The server should handle thousands of subscribers on thousands of channels without problems
 * Reliable
 	* High test coverage should give users that warm, fuzzy feeling of reliability
 
-### Things I wanted to do but didn't have time for
+### Things I wanted to do but know I won't have time for
 
-* Add Watchtower support to an existing embedded system so I could make a snazzy video
 * 100% test coverage
-* UDP support
-* HTTP Async support
-* Back everything with a database (probably [Bolt](https://github.com/boltdb/bolt))
+* Support for all of the endpoints
+* Add Watchtower support to an existing embedded system so I could make a snazzy video
+* Back everything with a database (probably [Bolt](https://github.com/boltdb/bolt)) so state is kept when the server goes down

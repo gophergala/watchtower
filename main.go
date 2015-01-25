@@ -6,22 +6,18 @@ import (
 	"log"
 	"net"
 	"net/http"
-
 	"os"
 	"time"
 
 	"github.com/gophergala/watchtower/config"
 	whttp "github.com/gophergala/watchtower/layers/http"
+	"github.com/gophergala/watchtower/layers/tcp"
 
 	"github.com/gorilla/handlers"
 	"github.com/julienschmidt/httprouter"
 )
 
 func handleUDPPacket(packet []byte) error {
-	return nil
-}
-
-func handleTCPConnection(c *net.Conn) error {
 	return nil
 }
 
@@ -50,7 +46,7 @@ func main() {
 
 		// List or join Channels
 		router.Handle("GET", "/channels", whttp.ListChannelsHandler)
-		router.Handle("GET", "/channels/join", whttp.JoinChannelsStreamHandler)
+		router.Handle("GET", "/channels/join/:id", whttp.JoinChannelsStreamHandler)
 		router.Handle("POST", "/channels/join/async", whttp.JoinChannelsAsyncHandler)
 
 		// Send messages
@@ -81,7 +77,7 @@ func main() {
 				if err != nil {
 					// handle error
 				}
-				go handleTCPConnection(&conn)
+				go tcp.Handle(conn)
 			}
 		}()
 	}

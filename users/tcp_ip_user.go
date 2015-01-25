@@ -1,32 +1,29 @@
 package users
 
 import (
-	"net"
-
 	"github.com/gophergala/watchtower/messages"
 )
 
 // NewTCPIPUser creates a new user connected over a TCP/IP socket
 // TODO: clean up by closing the connection when the user is deleteds
-func NewTCPIPUser(conn net.Conn) User {
+func NewTCPIPUser() User {
 	return &tcpIPUser{
-		conn: conn,
+		messageQueue: make(chan messages.Message, 10),
 	}
 }
 
 type tcpIPUser struct {
-	id   uint32
-	conn net.Conn
+	id           uint32
+	messageQueue chan messages.Message
 }
 
 func (t *tcpIPUser) ID() uint32 {
 	return t.id
 }
 
-// TODO: proper implementation
 func (t *tcpIPUser) Send(m messages.Message, channelID uint32) error {
-	_, err := t.conn.Write([]byte("Message received."))
-	return err
+	t.messageQueue <- m
+	return nil
 }
 
 func (t *tcpIPUser) setID(id uint32) {

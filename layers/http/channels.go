@@ -70,19 +70,21 @@ func joinChannelStreamHandler(w http.ResponseWriter, r *http.Request, params htt
 	}
 
 	// Check that we got a valid channel ID
-	channel64, err := strconv.ParseUint(r.FormValue("channel"), 0, 0)
+	channel64, err := strconv.ParseUint(params.ByName("id"), 0, 0)
 	channelID := uint32(channel64)
 	if err != nil {
 		return "", http.StatusUnauthorized, ErrInvalidChannel
 	}
 
+	log.Printf("wut")
 	// Gives the user a "response path" by tying the ResponseWriter to the channel
 	err = users.JoinStreamingChannel(sender, channelID, w)
 	if err != nil {
 		return "", http.StatusBadRequest, err
 	}
 
+	log.Printf("but")
 	// Join the channel
 	channels.Join(sender, channelID)
-	return "", http.StatusOK, nil
+	return "{\"status\": \"OK\"}", http.StatusOK, nil
 }
