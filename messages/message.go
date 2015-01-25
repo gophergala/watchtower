@@ -1,7 +1,16 @@
 package messages
 
 import (
+	"encoding/binary"
 	"encoding/json"
+)
+
+const (
+	messageSenderSize  = 4
+	messageChannelSize = 4
+	messageTypeSize    = 2
+	messageLengthSize  = 4
+	messageHeaderSize  = messageSenderSize + messageChannelSize + messageTypeSize + messageLengthSize
 )
 
 // A Message is sent on a channel, either as
@@ -12,6 +21,7 @@ type Message interface {
 	Content() string
 	Receivers() map[uint32]struct{} // nil if broadcast
 	JSON() string
+	Bytes() []byte
 }
 
 // A BroadcastMessage is broadcasted to one or more channels
@@ -42,6 +52,20 @@ func (b *BroadcastMessage) Content() string {
 func (b *BroadcastMessage) JSON() string {
 	encoded, _ := json.Marshal(b)
 	return string(encoded)
+}
+
+// Bytes returns a version of the message fit
+// for sending over a TCP/IP or UDP pipe. The
+// format is defined in the documentation
+func (b *BroadcastMessage) Bytes(channelID uint32) []byte {
+	bytes := make([]byte, (messageHeaderSize + len([]byte(b.content))))
+
+	binary.LittleEndian.PutUint32(bytes[0:4], (b.sender))
+	binary.LittleEndian.PutUint32(bytes[4:8], channelID)
+	binary.LittleEndian.PutUint16(bytes[8:10], 0) // Message type - reserved for later use
+	binary.LittleEndian.PutUint32(bytes[10:14], uint32(len(b.content)))
+	copy(bytes[14:], []byte(b.content))
+	return bytes
 }
 
 // Receivers returns nil for a Broadcast message
@@ -75,4 +99,18 @@ func (p *PrivateMessage) Receivers() map[uint32]struct{} {
 func (p *PrivateMessage) JSON() string {
 	encoded, _ := json.Marshal(p)
 	return string(encoded)
+}
+
+// Bytes returns a version of the message fit
+// for sending over a TCP/IP or UDP pipe. The
+// format is defined in the documentation
+func (p *PrivateMessage) Bytes(channelID uint32) []byte {
+	bytes := make([]byte, (messageHeaderSize + len([]byte(p.content))))
+
+	binary.LittleEndian.PutUint32(bytes[0:4], (p.sender))
+	binary.LittleEndian.PutUint32(bytes[4:8], channelID)
+	binary.LittleEndian.PutUint16(bytes[8:10], 0) // Message type - reserved for later use
+	binary.LittleEndian.PutUint32(bytes[10:14], uint32(len(p.content)))
+	copy(bytes[14:], []byte(p.content))
+	return bytes
 }

@@ -15,14 +15,14 @@ You get freedom to choose the format of your messages. You like JSON? You get JS
 	* One by one, the Arduinos start spraying water all over
 	* Your wife kicks you out for ruining the curtains for the umpteenth time
 	* You are now living on the street, trading Go Programming for food (but you have an awesome flower watering system, if only one of those VC's would invest...)
-	
+
 #### So how do I actually use it?
 
 	* Register as a new sender
 	* Join some channels
 	* Broadcast or send some messages
 	* Act on / display received messages
-	
+
 The rest, as they say, is history.
 
 #### Ideas
@@ -31,8 +31,22 @@ The rest, as they say, is history.
 	* Use it as an extremely lightweight IRC server, for chatting
 	* Use it to launch nuclear weapons, but require two or more registered users to confirm the launch
 
+#### Message formats
 
-### Examples (HTTP)
+##### TCP/IP & UDP
+
+	Sender (uint32) - channel (uint32) - reserved (uint16) - message length (uint32) - message (bytes)
+
+Everything encoded as little-endian (where applicable)
+
+##### HTTP
+
+	{
+		"channel": 5
+		"message": "this here is your message"
+	}
+
+### Example endpoint requests (HTTP)
 
 ##### Register as a new sender (HTTP)
 
@@ -74,7 +88,7 @@ Or any of the following
 	* HTTP 204 - no channels created yet
 
 
-	
+
 ##### Join a channel (HTTP stream)
 
 GET to http://your-watchtower-url/channels/join?channels=5,6&sender=72
@@ -113,14 +127,14 @@ POST to http://your-watchtower-url/broadcast
 
 
 Watchtower might reply HTTP 200 (message broadcasted)
-	
+
 Or any of the following
 
 	* HTTP 400 - tried to send to unjoined channel
 	* HTTP 400 - invalid callback URL
-	* HTTP 500 - broadcast failed 
+	* HTTP 500 - broadcast failed
 
-Assuming success, that same message will now be received by all subscribers on channel 5. 
+Assuming success, that same message will now be received by all subscribers on channel 5.
 
 ##### Send a message on a channel to specific subscriber(s)
 

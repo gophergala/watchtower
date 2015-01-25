@@ -1,5 +1,5 @@
 ### Introduction & Background
-Like many in my circle of friends I enjoy geeking out with embedded systems. 
+Like many in my circle of friends I enjoy geeking out with embedded systems.
 
 Rather than taking a minute to water the flowers, everyone "knows" it's wiser to spend hours setting up an Arduino controlling a water pump, controlled by a moisture sensor in the flower pot. To complete the circle, one would of course like to get the moisture sensor readings out from the Arduino, so that instead of "if dry then goto pump_water" we can hook it up to the cloud and replace the original, simple algorithm with a deep neural network that will learn how to water plants optimally.... But now I am getting ahead of myself ;).
 
@@ -9,7 +9,7 @@ I'd been thinking about this kind of project for a while and the Gala was a grea
 
 ### Why Go?
 
-Go felt like a natural choice for this project for several reasons. A server app like this requires **performance** (if you want to support thousands of devices on your DigitalOcean droplet), **great concurrency** primitives (to scale up) and a **solid standard library**, so one does not have to reinvent the wheel when it comes to e.g HTTP or TCP servers. 
+Go felt like a natural choice for this project for several reasons. A server app like this requires **performance** (if you want to support thousands of devices on your DigitalOcean droplet), **great concurrency** primitives (to scale up) and a **solid standard library**, so one does not have to reinvent the wheel when it comes to e.g HTTP or TCP servers.
 
 Go has all of this, with loads of sugar on top.
 
@@ -20,7 +20,7 @@ Hoping to get the app finished enough today that all of these will be true, but 
 * **Multiple interfaces**
   * Coding a controller app for your PC? Use the streaming HTTP endpoints
   * Listening in on a channel and storing data on your server to graph later? Use the HTTP async callback endpoints
-  * Sending out data from your Arduinos? Use the UDP endpoints
+  * Sending out data from your Arduinos? Use the TCP/IP or UDP endpoints
 * High performance
 	* The server can handle thousands of subscribers on thousands of channels without problems
 * Reliable
@@ -28,5 +28,7 @@ Hoping to get the app finished enough today that all of these will be true, but 
 
 ### Things I wanted to do but didn't have time for
 
-* Add Watchtower support to an existing embedded system and make a snazzy video
+* Add Watchtower support to an existing embedded system so I could make a snazzy video
 * 100% test coverage
+* UDP support
+* Back everything with a database (probably [Bolt](https://github.com/boltdb/bolt))
