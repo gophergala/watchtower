@@ -40,7 +40,7 @@ func (h *httpStreamUser) Send(m messages.Message, channelID uint32) error {
 	return nil
 }
 
-func (h *httpStreamUser) setID(id uint32) {
+func (h *httpStreamUser) SetID(id uint32) {
 	h.id = id
 }
 
@@ -75,6 +75,6 @@ func (h *httpAsyncUser) Send(m messages.Message, channelID uint32) error {
 	return nil
 }
 
-func (h *httpAsyncUser) setID(id uint32) {
+func (h *httpAsyncUser) SetID(id uint32) {
 	h.id = id
 }

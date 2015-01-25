@@ -37,7 +37,7 @@ func Register(u User) (uint32, error) {
 		_, alreadyExists := users[userID]
 		// 0 is not a valid user ID either
 		if userID != 0 && !alreadyExists {
-			u.setID(userID)
+			u.SetID(userID)
 			users[userID] = u
 			break
 		}

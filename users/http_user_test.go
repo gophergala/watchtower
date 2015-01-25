@@ -19,7 +19,7 @@ func TestHTTPStreamUser(t *testing.T) {
 		t.Error("invalid id")
 	}
 
-	u.setID(1)
+	u.SetID(1)
 
 	if u.ID() != 1 {
 		t.Error("invalid id after set")
@@ -38,7 +38,7 @@ func TestHTTPAsyncUser(t *testing.T) {
 		t.Error("invalid id")
 	}
 
-	u.setID(1)
+	u.SetID(1)
 
 	if u.ID() != 1 {
 		t.Error("invalid id after set")
