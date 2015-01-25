@@ -6,7 +6,7 @@ It provides **channels** you can communicate on, which carry events from senders
 
 You get freedom to choose the format of your messages. You like JSON? You get JSON! You like binary? You get binary!
 
-#### How should you use Watchtower?
+### How should you use Watchtower?
 
 	* You download it and set up a server
 	* All your flower-watering Arduinos register and joins a channel
@@ -16,26 +16,54 @@ You get freedom to choose the format of your messages. You like JSON? You get JS
 	* Your wife kicks you out for ruining the curtains for the umpteenth time
 	* You are now living on the street, trading Go Programming for food (but you have an awesome flower watering system, if only one of those VC's would invest...)
 
-#### So how do I actually use it?
+### So how do I actually use it?
 
-	* Register as a new sender
+	* Register as a new user
 	* Join some channels
-	* Broadcast or send some messages
+	* Broadcast some messages
 	* Act on / display received messages
 
 The rest, as they say, is history.
 
-#### Ideas
+### Ideas
 
 	* Connect all your embedded devices to different channels - you now have a communication protocol that ties everything together
 	* Use it as an extremely lightweight IRC server, for chatting
 	* Use it to launch nuclear weapons, but require two or more registered users to confirm the launch
 
-#### Message formats
+### Message formats
 
-##### TCP/IP & UDP
-s
-	Sender (uint32) - channel (uint32) - reserved (uint16) - message length (uint32) - message (bytes)
+#### TCP/IP & UDP
 
-Everything encoded as little-endian (where applicable)
+##### Register as a user
+
+Send 'R' to the server, like so
+
+	echo "R" | nc localhost 3033
+	
+The server will respond with an acknowledgement packet (first byte = 'A') and your four-byte user ID (second to fifth byte)
+
+##### Join a channel
+
+Send 'J' (one byte) plus your user ID (four bytes) and the channel ID to the server, for example (if your user ID is 5308416 and you want to join channel 5308411)
+
+	echo "J00000001" | nc localhost 3033
+	
+The server will respond with an ack packet (first byte = 'A'), and the channel ID (following four bytes)
+
+##### Send messages
+
+Send 'M', followed by your user ID (four bytes), the channel ID (four bytes), the length of the message (four bytes) and the actual message (N bytes)
+
+Since you must be subscribed to the channels you send to, you will get the same message back on the channel, in the message format described below.
+
+##### Receive messages
+
+A message is denoted by the first byte being set to 'M'. The following four bytes are the sender, then then channel ID (4 bytes), the message type (2 bytes - not yet in use) and the message length (4 bytes). After this, the message itself follows.
+
+A client will receive all messages (for now, private messages in the pipeline) sent to any channel the client is listening to.
+
+### Implementing your own client
+
+Take a look in `interfaces/tcp/handler_test.go` for a code sample on how the system can be used in Go. Adapt to suit whatever environment you are in.
 
