@@ -5,7 +5,6 @@ import (
 )
 
 func TestUser(t *testing.T) {
-	// TODO: Test Send()
 	u := newUser()
 
 	if u.ID() != 0 {
