@@ -22,9 +22,13 @@ var (
 )
 
 // Join a channel. Creates the channel if it doesn't exist
+// This function is idempotent in the sense that one user
+// can not "double-join" a channel so successive calls to
+// this function have no effect
 func Join(userID, channelID uint32) {
 	channelEditMutex.Lock()
 	defer channelEditMutex.Unlock()
+
 	// Add the new subscriber to an existing channel
 	channel, exists := channels[channelID]
 	if exists {
@@ -36,9 +40,8 @@ func Join(userID, channelID uint32) {
 	// If the channel doesn't exist, create a new
 	// one with the caller as the only subscriber
 	c := Channel{
-		id:           channelID,
-		subscribers:  map[uint32]struct{}{userID: struct{}{}},
-		messageQueue: make(chan messages.Message, channelMessageBufferSize),
+		id:          channelID,
+		subscribers: map[uint32]struct{}{userID: struct{}{}},
 	}
 
 	channels[channelID] = &c
@@ -77,7 +80,5 @@ func Send(m messages.Message, channelID uint32) error {
 		users.Send(subscriberID, channelID, m)
 	}
 
-	// Queue the message for sending
-	channel.messageQueue <- m
 	return nil
 }
