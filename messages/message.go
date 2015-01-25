@@ -13,8 +13,9 @@ const (
 // on the channel
 type Message interface {
 	Sender() uint32
+	Channel() uint32
 	Content() string
 	Receivers() map[uint32]struct{} // nil if broadcast
-	JSON(uint32) string
-	Bytes(uint32) []byte
+	JSON() string
+	Bytes() []byte
 }

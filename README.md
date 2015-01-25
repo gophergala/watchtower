@@ -34,7 +34,7 @@ The rest, as they say, is history.
 #### Message formats
 
 ##### TCP/IP & UDP
-
+s
 	Sender (uint32) - channel (uint32) - reserved (uint16) - message length (uint32) - message (bytes)
 
 Everything encoded as little-endian (where applicable)

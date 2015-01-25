@@ -34,6 +34,8 @@ var (
 
 func Handle(c net.Conn) error {
 	var s state
+	var u *user
+
 	for {
 		buffer := bufferPool.Get().([]byte) // Borrow a buffer from the pool
 		// Read the incoming connection into the buffer.
@@ -47,7 +49,8 @@ func Handle(c net.Conn) error {
 			// Waiting for the sender to register
 			if buffer[0] == registerMessageType {
 				// Register the user
-				userID, err := users.Register(newUser())
+				u = newUser()
+				userID, err := users.Register(u)
 				if err != nil {
 					// Reply with an error message
 					c.Write([]byte{errorMessageType})
@@ -106,13 +109,17 @@ func Handle(c net.Conn) error {
 				message := buffer[13:(13 + int(messageLength))]
 
 				// Send message to channel
-				m := messages.NewBroadcastMessage(userID, string(message))
+				m := messages.NewBroadcastMessage(userID, channelID, string(message))
 				channels.Send(m, channelID)
+			}
 
-				// Reply with an ack
-				resp := make([]byte, 1, 1)
-				resp[0] = ackMessageType
+			select {
+			case msg := <-u.messageQueue:
+				var resp []byte
+				resp = append(resp, sendMessageType)
+				resp = append(resp, msg.Bytes()...)
 				c.Write(resp)
+			default:
 			}
 
 		case stateDisconnected:
