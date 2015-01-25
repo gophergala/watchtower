@@ -10,7 +10,7 @@ var (
 )
 
 func TestHTTPStreamUser(t *testing.T) {
-	u := NewHTTPStreamUser(0, nil)
+	u := NewHTTPStreamUser(nil)
 	if u == nil {
 		t.Error("failed to create http stream user")
 	}
@@ -29,7 +29,7 @@ func TestHTTPStreamUser(t *testing.T) {
 }
 
 func TestHTTPAsyncUser(t *testing.T) {
-	u := NewHTTPAsyncUser(0, nil)
+	u := NewHTTPAsyncUser("www.google.com")
 	if u == nil {
 		t.Error("failed to create http async user")
 	}
