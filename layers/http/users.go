@@ -41,5 +41,5 @@ func registerStreamHandler(w http.ResponseWriter, r *http.Request, params httpro
 	}
 
 	// return the user's new ID
-	return fmt.Sprintf("{\"id\": %d", id), http.StatusOK, nil
+	return fmt.Sprintf("{\"id\": %d}", id), http.StatusOK, nil
 }

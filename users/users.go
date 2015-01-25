@@ -36,6 +36,7 @@ func Register(u User) (uint32, error) {
 			break
 		}
 	}
+	usersMutex.Unlock()
 
 	if userID != 0 {
 		return userID, nil

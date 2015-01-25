@@ -6,7 +6,9 @@ import (
 	"log"
 	"net"
 	"net/http"
+
 	"os"
+	"time"
 
 	"github.com/gophergala/watchtower/config"
 	whttp "github.com/gophergala/watchtower/layers/http"
@@ -101,5 +103,16 @@ func main() {
 				go handleUDPPacket(buffer[0:plen])
 			}
 		}()
+	}
+
+	if httpPort == -1 && tcpPort == -1 && udpPort == -1 {
+		fmt.Println("you must active at least one endpoint (--http [PORT], --tcp [PORT] or --udp [PORT])")
+		os.Exit(-1)
+	}
+
+	// Sleep while waiting for shutdown signals
+	// TODO: Handle shutdown signals cleanly...
+	for {
+		time.Sleep(time.Second)
 	}
 }

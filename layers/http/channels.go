@@ -3,6 +3,7 @@ package http
 import (
 	"encoding/json"
 	"errors"
+	"log"
 	"net/http"
 	"strconv"
 
@@ -19,9 +20,10 @@ var (
 
 func listChannelsHandler(r *http.Request, params httprouter.Params) (string, int, error) {
 	// Grab user ID (error if not exists)
-	sender64, err := strconv.ParseUint(r.FormValue("sender"), 32, 10)
+	sender64, err := strconv.ParseUint(r.FormValue("sender"), 0, 0)
 	sender := uint32(sender64)
 	if err != nil {
+		log.Printf("%v", err)
 		return "", http.StatusUnauthorized, ErrInvalidSender
 	}
 
