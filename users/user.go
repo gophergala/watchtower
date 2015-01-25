@@ -14,12 +14,19 @@ var (
 	ErrFlushingToResponseWriter = errors.New("error flushing to response writer")
 )
 
+// A User represents a user that is currently connected
+// and listening to one or more channels. The main thing
+// tying users together is their ability to receive messages
+// via the Send method
 type User interface {
 	ID() uint32
 	Send(messages.Message) error
 	setID(uint32)
 }
 
+// NewHTTPStreamUser creates a user who will get
+// his messages sent as part of a streaming response
+// TODO: Keep-alive
 func NewHTTPStreamUser(w http.ResponseWriter) User {
 	return &httpStreamUser{
 		w: w,
@@ -51,15 +58,17 @@ func (h *httpStreamUser) setID(id uint32) {
 	h.id = id
 }
 
-func NewHTTPAsyncUser(callbackURL string) User {
+// NewHTTPAsyncUser creates a user who will get
+// his messages sent to a specified URL endpoint
+func NewHTTPAsyncUser(url string) User {
 	return &httpAsyncUser{
-		callbackUrl: callbackURL,
+		callbackURL: url,
 	}
 }
 
 type httpAsyncUser struct {
 	id          uint32
-	callbackUrl string
+	callbackURL string
 }
 
 func (h *httpAsyncUser) ID() uint32 {
@@ -67,7 +76,7 @@ func (h *httpAsyncUser) ID() uint32 {
 }
 
 func (h *httpAsyncUser) Send(m messages.Message) error {
-	req, err := http.NewRequest("POST", h.callbackUrl, bytes.NewBuffer([]byte(m.JSON())))
+	req, err := http.NewRequest("POST", h.callbackURL, bytes.NewBuffer([]byte(m.JSON())))
 	req.Header.Set("Content-Type", "application/json; charset=utf-8")
 	req.Header.Set("X-Server-Name", "Watchtower")
 

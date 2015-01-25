@@ -20,6 +20,7 @@ type BroadcastMessage struct {
 	content string `json:"content"`
 }
 
+// NewBroadcastMessage creates a new broadcast message
 func NewBroadcastMessage(sender uint32, content string) *BroadcastMessage {
 	return &BroadcastMessage{
 		sender:  sender,

@@ -16,7 +16,7 @@ func SetSecret(s string) {
 	secretMutex.Unlock()
 }
 
-// Returns the secret key that has been set (thread-safe))
+// Secret returns the secret key that has been set (thread-safe))
 func Secret() string {
 	secretMutex.RLock()
 	defer secretMutex.RUnlock()
