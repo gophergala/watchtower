@@ -11,7 +11,7 @@ import (
 
 // RegisterHandler handles registration of new users (senders)
 func RegisterHandler(w http.ResponseWriter, r *http.Request, params httprouter.Params) {
-	response, statusCode, err := registerHandler(r, params)
+	response, statusCode, err := registerStreamHandler(w, r, params)
 	if err != nil {
 		http.Error(w, err.Error(), statusCode)
 		return
@@ -71,12 +71,13 @@ func BroadcastHandler(w http.ResponseWriter, r *http.Request, params httprouter.
 
 // SendMessageHandler sends a message to specifical recipients in a channel
 func SendMessageHandler(w http.ResponseWriter, r *http.Request, params httprouter.Params) {
-	response, statusCode, err := listChannelsHandler(r, params)
+	/*response, statusCode, err := listChannelsHandler(r, params)
 	if err != nil {
 		http.Error(w, err.Error(), statusCode)
 		return
 	}
 
 	w.WriteHeader(statusCode)
-	fmt.Fprintln(w, response)
+	fmt.Fprintln(w, response)*/
+	w.WriteHeader(http.StatusNotImplemented)
 }

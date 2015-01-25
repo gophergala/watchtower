@@ -5,6 +5,7 @@ import (
 	"sync"
 
 	"github.com/gophergala/watchtower/messages"
+	"github.com/gophergala/watchtower/users"
 )
 
 const (
@@ -20,19 +21,14 @@ var (
 	ErrChannelDoesNotExist = errors.New("the specified channel does not exist")
 )
 
-func init() {
-	// TODO: Start a goroutine that continously goes through
-	// existing channels and sends out the messages
-}
-
 // Join a channel. Creates the channel if it doesn't exist
-func Join(userID, channelID uint32) {
+func Join(user users.User, channelID uint32) {
 	channelEditMutex.Lock()
 
 	// Add the new subscriber to an existing channel
 	channel, exists := channels[channelID]
 	if exists {
-		channel.subscribers[userID] = struct{}{}
+		channel.subscribers[user.ID()] = user
 		channels[channelID] = channel
 		return
 	}
@@ -41,11 +37,11 @@ func Join(userID, channelID uint32) {
 	// one with the caller as the only subscriber
 	c := Channel{
 		id:           channelID,
-		subscribers:  map[uint32]struct{}{userID: struct{}{}},
+		subscribers:  map[uint32]users.User{user.ID(): user},
 		messageQueue: make(chan messages.Message, channelMessageBufferSize),
 	}
-	channels[channelID] = &c
 
+	channels[channelID] = &c
 	channelEditMutex.Unlock()
 }
 
@@ -62,8 +58,11 @@ func List() []uint32 {
 	return list
 }
 
-// Broadcast broadcasts a message on a channel
-func Broadcast(sender, channelID uint32, content string) error {
+// Send sends a message on a channel. The message can be either
+// a BroadcastMessage (in which case it will be broadcasted)
+// or a PrivateMessage (in which case it will only be sent to
+// it's recipients)
+func Send(m messages.Message, channelID uint32) error {
 	channelEditMutex.RLock()
 	defer channelEditMutex.RUnlock()
 
@@ -73,7 +72,7 @@ func Broadcast(sender, channelID uint32, content string) error {
 		return ErrChannelDoesNotExist
 	}
 
-	// Queue the message
-	channel.messageQueue <- messages.NewBroadcastMessage(sender, content)
+	// Queue the message for sending
+	channel.messageQueue <- m
 	return nil
 }

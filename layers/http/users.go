@@ -16,7 +16,7 @@ var (
 	ErrInvalidSecretKey = errors.New("invalid or missing secret key")
 )
 
-func registerHandler(r *http.Request, params httprouter.Params) (string, int, error) {
+func registerStreamHandler(w http.ResponseWriter, r *http.Request, params httprouter.Params) (string, int, error) {
 	// Decode the JSON request
 	type Request struct {
 		Secret string `json:"secret_key"`
@@ -34,7 +34,8 @@ func registerHandler(r *http.Request, params httprouter.Params) (string, int, er
 	}
 
 	// Register a new user
-	id, err := users.Register()
+	user := users.NewHTTPStreamUser(w)
+	id, err := users.Register(user)
 	if err != nil {
 		return "", http.StatusInternalServerError, users.ErrRegisteringNewUser
 	}

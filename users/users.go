@@ -13,7 +13,7 @@ const (
 )
 
 var (
-	users      = make(map[uint32]struct{})
+	users      = make(map[uint32]User)
 	usersMutex = &sync.RWMutex{}
 
 	// ErrRegisteringNewUser if a new user can't be registered
@@ -21,7 +21,7 @@ var (
 )
 
 // Register registers and stores a new user, returning his ID
-func Register() (uint32, error) {
+func Register(u User) (uint32, error) {
 	var userID uint32
 
 	usersMutex.Lock()
@@ -29,8 +29,10 @@ func Register() (uint32, error) {
 		// Try retryTimes times to find a random user id, not already in users
 		userID = rand.Uint32()
 		_, alreadyExists := users[userID]
-		if userID == 0 || !alreadyExists { // 0 is not a valid user ID
-			users[userID] = struct{}{}
+		// 0 is not a valid user ID either
+		if userID != 0 && !alreadyExists {
+			u.setID(userID)
+			users[userID] = u
 			break
 		}
 	}
