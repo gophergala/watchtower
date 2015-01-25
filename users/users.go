@@ -5,7 +5,6 @@ package users
 import (
 	"errors"
 	"math/rand"
-	"net/http"
 	"sync"
 
 	"github.com/gophergala/watchtower/messages"
@@ -21,9 +20,8 @@ var (
 
 	// ErrRegisteringNewUser if a new user can't be registered
 	ErrRegisteringNewUser = errors.New("error registering new user")
-
-	NoSuchUserError       = errors.New("no such user registered")
-	NotStreamingUserError = errors.New("non-streaming user can't join streaming channel")
+	// NoSuchUserError is thrown when the caller requests details for a non-existant user
+	NoSuchUserError = errors.New("no such user registered")
 )
 
 // Register registers and stores a new user, returning his ID
@@ -77,24 +75,4 @@ func Send(recipientID, channelID uint32, m messages.Message) error {
 	}
 
 	return user.Send(m, channelID)
-}
-
-// JoinStreamingChannel joins the given user to the given channel
-func JoinStreamingChannel(userID uint32, channelID uint32, w http.ResponseWriter) error {
-	usersMutex.Lock()
-	defer usersMutex.Unlock()
-
-	user, exists := users[userID]
-	if !exists {
-		return NoSuchUserError
-	}
-	streamUser, ok := user.(*httpStreamUser)
-	if !ok {
-		return NotStreamingUserError
-	}
-
-	// Store the ResponseWriter for writing to later on
-	streamUser.channelStreams[channelID] = w
-
-	return nil
 }

@@ -1,14 +1,7 @@
 package users
 
 import (
-	"errors"
-
 	"github.com/gophergala/watchtower/messages"
-)
-
-var (
-	// ErrFlushingToResponseWriter is thrown if the response writer can't be cast to a HTTP flusher
-	ErrFlushingToResponseWriter = errors.New("error flushing to response writer")
 )
 
 // A User represents a user that is currently connected

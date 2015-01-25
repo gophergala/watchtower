@@ -71,6 +71,7 @@ func Send(m messages.Message, channelID uint32) error {
 		return ErrChannelDoesNotExist
 	}
 
+	// Send the message to all subscribers
 	subscribers := channel.subscribers
 	for subscriberID := range subscribers {
 		users.Send(subscriberID, channelID, m)
