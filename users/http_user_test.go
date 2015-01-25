@@ -10,7 +10,7 @@ var (
 )
 
 func TestHTTPStreamUser(t *testing.T) {
-	u := NewHTTPStreamUser(nil)
+	u := NewHTTPStreamUser()
 	if u == nil {
 		t.Error("failed to create http stream user")
 	}

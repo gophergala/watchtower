@@ -30,7 +30,7 @@ func TestPrivateMessage(t *testing.T) {
 		t.Error("content or Content() did not match")
 	}
 
-	if p.JSON() == "" {
+	if p.JSON(1) == "" {
 		t.Error("failed to encode as JSON")
 	}
 }
@@ -59,7 +59,7 @@ func TestBroadcastMessage(t *testing.T) {
 		t.Error("content or Content() did not match")
 	}
 
-	if b.JSON() == "" {
+	if b.JSON(1) == "" {
 		t.Error("failed to encode as JSON")
 	}
 }

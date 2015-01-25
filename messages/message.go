@@ -20,8 +20,8 @@ type Message interface {
 	Sender() uint32
 	Content() string
 	Receivers() map[uint32]struct{} // nil if broadcast
-	JSON() string
-	Bytes() []byte
+	JSON(uint32) string
+	Bytes(uint32) []byte
 }
 
 // A BroadcastMessage is broadcasted to one or more channels
@@ -49,8 +49,13 @@ func (b *BroadcastMessage) Content() string {
 }
 
 // JSON returns a JSON-encoded version of the message
-func (b *BroadcastMessage) JSON() string {
-	encoded, _ := json.Marshal(b)
+func (b *BroadcastMessage) JSON(channelID uint32) string {
+	m := make(map[string]interface{})
+	m["sender"] = b.sender
+	m["content"] = b.content
+	m["channel"] = channelID
+	encoded, _ := json.Marshal(m)
+
 	return string(encoded)
 }
 
@@ -96,8 +101,12 @@ func (p *PrivateMessage) Receivers() map[uint32]struct{} {
 }
 
 // JSON returns a JSON-encoded version of the message
-func (p *PrivateMessage) JSON() string {
-	encoded, _ := json.Marshal(p)
+func (p *PrivateMessage) JSON(channelID uint32) string {
+	m := make(map[string]interface{})
+	m["sender"] = p.sender
+	m["content"] = p.content
+	m["channel"] = channelID
+	encoded, _ := json.Marshal(m)
 	return string(encoded)
 }
 

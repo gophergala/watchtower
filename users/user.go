@@ -17,6 +17,6 @@ var (
 // via the Send method
 type User interface {
 	ID() uint32
-	Send(messages.Message) error
+	Send(messages.Message, uint32) error
 	setID(uint32)
 }

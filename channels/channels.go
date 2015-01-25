@@ -5,7 +5,6 @@ import (
 	"sync"
 
 	"github.com/gophergala/watchtower/messages"
-	"github.com/gophergala/watchtower/users"
 )
 
 const (
@@ -22,13 +21,13 @@ var (
 )
 
 // Join a channel. Creates the channel if it doesn't exist
-func Join(user users.User, channelID uint32) {
+func Join(userID, channelID uint32) {
 	channelEditMutex.Lock()
 
 	// Add the new subscriber to an existing channel
 	channel, exists := channels[channelID]
 	if exists {
-		channel.subscribers[user.ID()] = user
+		channel.subscribers[userID] = struct{}{}
 		channels[channelID] = channel
 		return
 	}
@@ -37,7 +36,7 @@ func Join(user users.User, channelID uint32) {
 	// one with the caller as the only subscriber
 	c := Channel{
 		id:           channelID,
-		subscribers:  map[uint32]users.User{user.ID(): user},
+		subscribers:  map[uint32]struct{}{userID: struct{}{}},
 		messageQueue: make(chan messages.Message, channelMessageBufferSize),
 	}
 

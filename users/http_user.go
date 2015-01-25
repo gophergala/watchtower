@@ -11,26 +11,27 @@ import (
 // NewHTTPStreamUser creates a user who will get
 // his messages sent as part of a streaming response
 // TODO: Keep-alive
-// TODO: Clean up by closing the stream
-func NewHTTPStreamUser(w http.ResponseWriter) User {
+// TODO: Clean up by closing the streams
+func NewHTTPStreamUser() User {
 	return &httpStreamUser{
-		w: w,
+		channelStreams: make(map[uint32]http.ResponseWriter),
 	}
 }
 
 type httpStreamUser struct {
-	id uint32
-	w  http.ResponseWriter
+	id             uint32
+	channelStreams map[uint32]http.ResponseWriter
 }
 
 func (h *httpStreamUser) ID() uint32 {
 	return h.id
 }
 
-func (h *httpStreamUser) Send(m messages.Message) error {
-	h.w.Header().Set("Content-Type", "application/json; charset=utf-8")
-	fmt.Fprintf(h.w, m.JSON())
-	if f, ok := h.w.(http.Flusher); ok {
+func (h *httpStreamUser) Send(m messages.Message, channelID uint32) error {
+	// TODO: Deal with race conditions when accessing the map from several threads
+	h.channelStreams[channelID].Header().Set("Content-Type", "application/json; charset=utf-8")
+	fmt.Fprintf(h.channelStreams[channelID], m.JSON(channelID))
+	if f, ok := h.channelStreams[channelID].(http.Flusher); ok {
 		f.Flush()
 	} else {
 		return ErrFlushingToResponseWriter
@@ -60,8 +61,8 @@ func (h *httpAsyncUser) ID() uint32 {
 	return h.id
 }
 
-func (h *httpAsyncUser) Send(m messages.Message) error {
-	req, err := http.NewRequest("POST", h.callbackURL, bytes.NewBuffer([]byte(m.JSON())))
+func (h *httpAsyncUser) Send(m messages.Message, channelID uint32) error {
+	req, err := http.NewRequest("POST", h.callbackURL, bytes.NewBuffer([]byte(m.JSON(channelID))))
 	req.Header.Set("Content-Type", "application/json; charset=utf-8")
 	req.Header.Set("X-Server-Name", "Watchtower")
 

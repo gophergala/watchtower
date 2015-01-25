@@ -5,6 +5,7 @@ package users
 import (
 	"errors"
 	"math/rand"
+	"net/http"
 	"sync"
 )
 
@@ -18,6 +19,9 @@ var (
 
 	// ErrRegisteringNewUser if a new user can't be registered
 	ErrRegisteringNewUser = errors.New("error registering new user")
+
+	NoSuchUserError       = errors.New("no such user registered")
+	NotStreamingUserError = errors.New("non-streaming user can't join streaming channel")
 )
 
 // Register registers and stores a new user, returning his ID
@@ -57,5 +61,23 @@ func List() map[uint32]struct{} {
 	usersMutex.RUnlock()
 
 	return usersCopy
+}
 
+// JoinStreamingChannel joins the given user to the given channel
+func JoinStreamingChannel(userID uint32, channelID uint32, w http.ResponseWriter) error {
+	usersMutex.Lock()
+	user, exists := users[userID]
+	if exists {
+		return NoSuchUserError
+	}
+	streamUser, ok := user.(*httpStreamUser)
+	if !ok {
+		return NotStreamingUserError
+	}
+
+	// Store the ResponseWriter for writing to later on
+	streamUser.channelStreams[channelID] = w
+	usersMutex.Unlock()
+
+	return nil
 }

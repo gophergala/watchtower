@@ -34,7 +34,8 @@ func registerStreamHandler(w http.ResponseWriter, r *http.Request, params httpro
 	}
 
 	// Register a new user
-	user := users.NewHTTPStreamUser(w)
+	// TODO: Support registering async users here
+	user := users.NewHTTPStreamUser()
 	id, err := users.Register(user)
 	if err != nil {
 		return "", http.StatusInternalServerError, users.ErrRegisteringNewUser

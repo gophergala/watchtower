@@ -23,7 +23,8 @@ func (t *tcpIPUser) ID() uint32 {
 	return t.id
 }
 
-func (t *tcpIPUser) Send(m messages.Message) error {
+// TODO: proper implementation
+func (t *tcpIPUser) Send(m messages.Message, channelID uint32) error {
 	_, err := t.conn.Write([]byte("Message received."))
 	return err
 }

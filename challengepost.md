@@ -31,4 +31,5 @@ Hoping to get the app finished enough today that all of these will be true, but 
 * Add Watchtower support to an existing embedded system so I could make a snazzy video
 * 100% test coverage
 * UDP support
+* HTTP Async support
 * Back everything with a database (probably [Bolt](https://github.com/boltdb/bolt))
